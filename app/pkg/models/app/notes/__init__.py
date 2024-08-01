@@ -1,6 +1,6 @@
 """Note model fields."""
 
-from datetime import datetime
+from datetime import datetime, time
 
 from pydantic import Field, NonNegativeInt
 
@@ -41,9 +41,9 @@ class NoteFields(BaseNote):
     class ReminderTime(BaseNote):
         """Reminder time fields."""
 
-        reminder_time: datetime = Field(
+        reminder_time: time = Field(
             description="Note reminder time.",
-            example=datetime.now(),
+            example=datetime.now().time(),
         )
 
     class Notified(BaseNote):

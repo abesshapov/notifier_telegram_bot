@@ -1,6 +1,6 @@
 """Tests on note repository."""
 
-from datetime import datetime
+from datetime import datetime, timedelta
 from typing import List
 
 import pytest
@@ -22,7 +22,7 @@ async def test_note_creation_for_nonexistent_user(
         await note_repository.create(
             notes_repository.CreateNoteCommand(
                 user_id=client_id,
-                reminder_time=datetime.now(),
+                reminder_time=datetime.now().time(),
                 text="Some reminder",
             ),
         )
@@ -43,7 +43,7 @@ async def test_note_creation_for_existent_user(
         ),
     )
 
-    reminder_time = datetime.now()
+    reminder_time = datetime.now().time()
     creation_response = await note_repository.create(
         notes_repository.CreateNoteCommand(
             user_id=user.id,
@@ -72,7 +72,7 @@ async def test_multiple_notes_creation_for_user(
         ),
     )
 
-    reminder_time = datetime.now()
+    reminder_time = datetime.now().time()
     creation_response = await note_repository.create(
         notes_repository.CreateNoteCommand(
             user_id=user.id,
@@ -111,7 +111,7 @@ async def test_specific_note_reading(
     creation_response = await note_repository.create(
         notes_repository.CreateNoteCommand(
             user_id=user.id,
-            reminder_time=datetime.now(),
+            reminder_time=datetime.now().time(),
             text="Some reminder",
         ),
     )
@@ -140,12 +140,12 @@ async def test_user_notes_reading(
     )
 
     created_notes: List[notes_repository.NoteResponse] = []
-    for _ in range(3):
+    for i in range(3):
         created_notes.append(
             await note_repository.create(
                 notes_repository.CreateNoteCommand(
                     user_id=user.id,
-                    reminder_time=datetime.now(),
+                    reminder_time=(datetime.now() + timedelta(hours=i)).time(),
                     text="Some reminder",
                 ),
             ),
@@ -182,7 +182,7 @@ async def test_on_all_notes_reading(
     creation_response = await note_repository.create(
         notes_repository.CreateNoteCommand(
             user_id=user.id,
-            reminder_time=datetime.now(),
+            reminder_time=datetime.now().time(),
             text="Some reminder",
         ),
     )
@@ -210,7 +210,7 @@ async def test_on_note_notified_state_update(
     creation_response = await note_repository.create(
         notes_repository.CreateNoteCommand(
             user_id=user.id,
-            reminder_time=datetime.now(),
+            reminder_time=datetime.now().time(),
             text="Some reminder",
         ),
     )
@@ -242,7 +242,7 @@ async def test_on_note_deletion(
     creation_response = await note_repository.create(
         notes_repository.CreateNoteCommand(
             user_id=user.id,
-            reminder_time=datetime.now(),
+            reminder_time=datetime.now().time(),
             text="Some reminder",
         ),
     )

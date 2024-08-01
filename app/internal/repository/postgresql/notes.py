@@ -75,7 +75,8 @@ class NoteRepository(Repository):
                 reminder_time,
                 notified
             from notes
-            where user_id = %(user_id)s;
+            where user_id = %(user_id)s
+            order by reminder_time asc;
         """
         async with get_connection() as cur:
             await cur.execute(q, query.to_dict())

@@ -13,7 +13,7 @@ steps = [
             id serial primary key,
             user_id integer references users(id),
             text text,
-            reminder_time timestamp,
+            reminder_time time without time zone,
             notified boolean default FALSE
         );
         """,
