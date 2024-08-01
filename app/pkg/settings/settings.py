@@ -117,6 +117,16 @@ class Postgresql(_Settings):
         return values
 
 
+class Telegram(_Settings):
+    """Telegram settings."""
+
+    TOKEN: SecretStr
+
+    WEBHOOK_URL: str
+
+    WEBHOOK_PATH: str
+
+
 class Logging(_Settings):
     """Logging settings."""
 
@@ -156,6 +166,9 @@ class Settings(_Settings):
 
     #: Postgresql: Postgresql settings.
     POSTGRES: Postgresql
+
+    #: Telegram: Telegram settings.
+    TELEGRAM: Telegram
 
 
 @lru_cache
