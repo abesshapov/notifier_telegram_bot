@@ -1,0 +1,87 @@
+version: '3.8'
+
+services:
+  api:
+    container_name: notifier_telegram_bot
+    build:
+      context: .
+      dockerfile: docker/api/Dockerfile
+    restart: unless-stopped
+    depends_on:
+      - migrations
+    expose:
+      - 5000
+    labels:
+      # Base configuration
+      - 'traefik.enable=true'
+      - 'traefik.docker.network=traefik-network'
+
+      # HTTPS entrypoint
+      - 'traefik.http.routers.notifier_telegram_bot.rule=Host(`${PROJECT__BASE_DOMAIN}`) && PathPrefix(`/api/v1/notifier_telegram_bot`)'
+      - 'traefik.http.middlewares.notifier_telegram_bot_api_stripprefix.stripprefix.prefixes=/api/v1/notifier_telegram_bot'
+      - 'traefik.http.routers.notifier_telegram_bot.middlewares=notifier_telegram_bot_api_stripprefix'
+      - 'traefik.http.routers.notifier_telegram_bot.entrypoints=https'
+      - 'traefik.http.routers.notifier_telegram_bot.tls=true'
+
+      # Prometheus metrics
+      - 'traefik.http.middlewares.notifier_telegram_bot_auth.basicauth.users=${METRICS__BASIC_AUTH_USER}:${METRICS__BASIC_AUTH_PASSWORD}'
+      - 'traefik.http.routers.notifier_telegram_bot_metrics.rule=Host(`${PROJECT__BASE_DOMAIN}`) && PathPrefix(`/api-metrics/notifier_telegram_bot/metrics`)'
+      - 'traefik.http.middlewares.notifier_telegram_bot_metrics_stripprefix.stripprefix.prefixes=/api-metrics/notifier_telegram_bot'
+      - 'traefik.http.routers.notifier_telegram_bot_metrics.middlewares=notifier_telegram_bot_metrics_stripprefix,notifier_telegram_bot_auth'
+      - 'traefik.http.routers.notifier_telegram_bot_metrics.entrypoints=https'
+      - 'traefik.http.routers.notifier_telegram_bot_metrics.tls=true'
+
+    command: [
+      "poetry", "run", "uvicorn", "app:create_app",
+      "--host", "0.0.0.0",
+      "--port", '5000',
+    ]
+    networks:
+      - traefik
+      - default
+
+  postgres:
+    build:
+      context: .
+      dockerfile: docker/postgresql/Dockerfile
+
+    restart: unless-stopped
+
+    env_file:
+      - .env
+    environment:
+      - PGDATA=/var/lib/postgresql/data/pgdata
+      - POSTGRES_PASSWORD=${POSTGRES__PASSWORD}
+      - POSTGRES_USER=${POSTGRES__USER}
+      - POSTGRES_DATABASES="test_${POSTGRES__DATABASE_NAME}","${POSTGRES__DATABASE_NAME}"
+    ports:
+      - ${POSTGRES__PORT}:5432
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -d ${POSTGRES__DATABASE_NAME} -U ${POSTGRES__USER}" ]
+      interval: 5s
+      timeout: 10s
+      retries: 5
+    volumes:
+      - ${POSTGRES_DATA_VOLUME}:/var/lib/postgresql/data/pgdata
+
+  migrations:
+    container_name: migrations
+    build:
+      context: .
+      dockerfile: docker/migrations/Dockerfile
+    env_file:
+      - .env
+    depends_on:
+      postgres:
+        condition: service_healthy
+    command: [
+      "poetry", "run", "python", "-m", "scripts.migrate"
+    ]
+
+networks:
+  default:
+    name: shared-network
+    external: true
+  traefik:
+    name: traefik-${PROJECT_NAME}-network
+    external: true
