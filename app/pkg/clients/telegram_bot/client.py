@@ -2,9 +2,9 @@
 
 import typing
 from logging import Logger
-from pydantic import SecretStr
 
 from aiogram import Bot, types
+from pydantic import SecretStr
 
 from app.pkg.logger import get_logger
 

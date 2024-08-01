@@ -18,6 +18,12 @@ class Tags(BaseEnum):
     WEBHOOKS = "webhooks"
 
 
+webhooks_router = APIRouter(
+    prefix="/webhooks",
+    tags=[Tags.WEBHOOKS],
+)
+
+
 __routes__ = Routes(
-    routers=(),
+    routers=(webhooks_router,),
 )
