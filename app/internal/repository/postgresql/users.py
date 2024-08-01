@@ -43,22 +43,15 @@ class UserRepository(Repository):
     @collect_response
     async def read(
         self,
-        query: repository.ReadUserQuery,
+        query: repository.ReadQuery,
     ) -> repository.UserResponse:
         """Read User."""
-        q = """
-            select
-                id,
-                name,
-                email,
-                telegram_id
-            from users
-            where telegram_id = %(telegram_id)s;
-        """
+        q = self.__create_read_query(query)
         async with get_connection() as cur:
             await cur.execute(q, query.to_dict())
             return await cur.fetchone()
 
+    @collect_response
     async def delete(
         self,
         cmd: repository.DeleteUserCommand,
@@ -77,11 +70,12 @@ class UserRepository(Repository):
             await cur.execute(q, cmd.to_dict())
             return await cur.fetchone()
 
+    @collect_response
     async def read_all(self) -> List[repository.UserResponse]:
         """Read all Users."""
         q = """
             select
-                iid,
+                id,
                 name,
                 email,
                 telegram_id
@@ -91,3 +85,32 @@ class UserRepository(Repository):
         async with get_connection() as cur:
             await cur.execute(q)
             return await cur.fetchall()
+
+    def __create_read_query(
+        self,
+        query: repository.ReadQuery,
+    ) -> str:
+        """Compose read query."""
+
+        if isinstance(query, repository.ReadUserQueryById):
+            q = """
+                select
+                    id,
+                    name,
+                    email,
+                    telegram_id
+                from users
+                where id = %(id)s;
+            """
+
+        if isinstance(query, repository.ReadUserQueryByTelegramId):
+            q = """
+                select
+                    id,
+                    name,
+                    email,
+                    telegram_id
+                from users
+                where telegram_id = %(telegram_id)s;
+            """
+        return q
