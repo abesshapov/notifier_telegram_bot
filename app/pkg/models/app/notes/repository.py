@@ -20,6 +20,7 @@ class NoteResponse(
     NoteFields.UserId,
     NoteFields.Text,
     NoteFields.ReminderTime,
+    NoteFields.Notified,
 ):
     """Note response."""
 

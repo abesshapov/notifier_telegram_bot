@@ -1,6 +1,7 @@
 """All postgresql repositories are defined here."""
 
 from dependency_injector import containers, providers
+
 from app.internal.repository.postgresql.notes import NoteRepository
 from app.internal.repository.postgresql.users import UserRepository
 

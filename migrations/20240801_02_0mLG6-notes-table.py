@@ -12,8 +12,8 @@ steps = [
         CREATE TABLE if not exists notes (
             id serial primary key,
             user_id integer references users(id),
-            note_text text,
-            remined_time timestamp,
+            text text,
+            reminder_time timestamp,
             notified boolean default FALSE
         );
         """,

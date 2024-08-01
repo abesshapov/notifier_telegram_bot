@@ -41,7 +41,7 @@ class NoteFields(BaseNote):
     class ReminderTime(BaseNote):
         """Reminder time fields."""
 
-        reminder_time: str = Field(
+        reminder_time: datetime = Field(
             description="Note reminder time.",
             example=datetime.now(),
         )
