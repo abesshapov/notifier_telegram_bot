@@ -13,6 +13,7 @@ pytest_plugins = [
     "tests.fixtures.repository.postgresql.helpers",
     "tests.fixtures.services.services",
     "tests.fixtures.clients.clients",
+    "tests.fixtures.workers.workers",
     "tests.fixtures.models.controller",
     "tests.fixtures.handlers.equals",
     "tests.fixtures.settings",
