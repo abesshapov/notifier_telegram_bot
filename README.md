@@ -21,6 +21,7 @@
 6. Запустить проект: ```uvicorn app:create_app --reload --port XXX```. Порт при этом должен совпадать с указанным в ngrok на этапе **4**.
 
 **Отчет о тестировании**
+
 Проект покрыт тестами на 95%:
 
 ![image](https://github.com/user-attachments/assets/0a195167-fb7d-4c16-b392-fd8116b7ff79)
