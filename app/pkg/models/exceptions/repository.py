@@ -9,6 +9,7 @@ __all__ = [
     "UniqueViolation",
     "EmptyResult",
     "DriverError",
+    "ForeignKeyViolation",
 ]
 
 
@@ -20,6 +21,11 @@ class UniqueViolation(BaseAPIException):
 class EmptyResult(BaseAPIException):
     message = "Empty result."
     status_code = status.HTTP_404_NOT_FOUND
+
+
+class ForeignKeyViolation(BaseAPIException):
+    message = "No such foreign key."
+    status_code = status.HTTP_409_CONFLICT
 
 
 class DriverError(BaseAPIException):

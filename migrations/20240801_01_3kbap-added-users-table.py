@@ -16,7 +16,7 @@ steps = [
             telegram_id bigint
         );
         """,
-        "drop table if exists users;"
+        "drop table if exists users cascade;"
     )
 
 ]

@@ -1,7 +1,7 @@
 """Create connection to postgresql."""
 
 from contextlib import asynccontextmanager
-from typing import AsyncGenerator, Optional, Union
+from typing import Optional, Union
 
 from aiopg import Pool
 from aiopg.pool import Cursor
@@ -19,7 +19,7 @@ __all__ = ["get_connection", "acquire_connection"]
 async def get_connection(
     pool: Pool = Provide[Connectors.postgresql.connector],
     return_pool: bool = False,
-) -> AsyncGenerator[Union[Cursor, Pool]]:
+) -> Union[Cursor, Pool]:  # type: ignore
     """Get async connection pool to postgresql.
 
     Args:
@@ -57,7 +57,7 @@ async def get_connection(
 async def acquire_connection(
     pool: Pool,
     cursor_factory: Optional[cursor] = None,
-) -> AsyncGenerator[Cursor]:
+) -> Cursor:  # type: ignore
     """Acquire connection from pool.
 
     Args:

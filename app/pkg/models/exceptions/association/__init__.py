@@ -6,6 +6,7 @@ from app.pkg.models.exceptions import repository
 
 __aiopg__ = {
     errorcodes.UNIQUE_VIOLATION: repository.UniqueViolation,
+    errorcodes.FOREIGN_KEY_VIOLATION: repository.ForeignKeyViolation,
 }
 
 # TODO: Make this dict more flexible.
