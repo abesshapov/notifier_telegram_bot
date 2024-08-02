@@ -8,7 +8,7 @@ from app.internal.services.note import NoteService
 from app.internal.services.telegram import TelegramService
 from app.internal.services.user import UserService
 from app.pkg.clients.telegram_bot.client import TelegramBotClient
-from app.pkg.settings.settings import Settings
+from app.pkg.settings import settings
 
 
 @pytest.fixture
@@ -43,7 +43,7 @@ def telegram_service(
 
     return TelegramService(
         telegram_bot_client=telegram_bot_client,
-        webhook_url=Settings.TELEGRAM.WEBHOOK_URL,
+        webhook_url=settings.TELEGRAM.WEBHOOK_URL,
         user_service=user_service,
         note_service=note_service,
     )

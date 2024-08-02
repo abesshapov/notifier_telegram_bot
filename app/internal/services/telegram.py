@@ -282,3 +282,13 @@ class TelegramService:
         """Closes bot session."""
 
         await self.__telegram_bot_client.get_bot().close()
+
+    def get_dispatcher(self) -> Dispatcher:
+        """Get dispatcher from service."""
+
+        return self.__dp
+
+    def get_bot(self) -> Bot:
+        """Get bot from service."""
+
+        return self.__telegram_bot_client.get_bot()

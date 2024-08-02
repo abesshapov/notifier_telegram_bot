@@ -22,7 +22,7 @@ async def test_check_if_user_is_existent(
             repository.CreateUserCommand(
                 telegram_id=client_id,
                 email="test@mail.ru",
-                name="Peter",
+                name="Alex",
             ),
         )
     assert existent == await user_service.check_if_user_existent_for_client(client_id)
@@ -44,7 +44,7 @@ async def test_get_user_internal_id(
                 repository.CreateUserCommand(
                     telegram_id=client_id,
                     email="test@mail.ru",
-                    name="Peter",
+                    name="Alex",
                 ),
             )
         ).id
@@ -63,7 +63,7 @@ async def test_user_creation(
     email = "test@mail.ru" if email_valid else "invalid 100%"
     response = await user_service.create_user_for_client(
         client_id=client_id,
-        name="Peter",
+        name="Alex",
         email=email,
     )
     assert email_valid == response
@@ -73,7 +73,7 @@ async def test_user_creation(
             repository.ReadUserQueryByTelegramId(telegram_id=client_id),
         )
         assert user.email == email
-        assert user.name == "Peter"
+        assert user.name == "Alex"
 
     else:
         with pytest.raises(EmptyResult):

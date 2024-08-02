@@ -6,8 +6,9 @@ Reminds clients of closing notes.
 import asyncio
 from datetime import datetime, timedelta
 from logging import Logger
-from typing import Final
+from typing import Final, List
 
+from aiogram.types import Message
 from aiogram.utils.exceptions import ChatNotFound
 from pydantic import PositiveInt
 
@@ -43,29 +44,37 @@ class NotifierWorker(BaseWorker):
         self.__user_repository = user_repository
         self.__note_repository = note_repository
 
-    async def run(self) -> None:  # noqa: C901
+    async def run(self) -> None:
         """Main function to notification worker."""
 
         while True:
-            try:
-                notes = await self.__note_repository.read_all()
-                notes = [note for note in notes if not note.notified]
-            except EmptyResult:
-                notes = []
-            self.__logger.info(  # pylint: disable=logging-fstring-interpolation
-                f"Unnotified notes: {len(notes)}",
-            )
-            for note in notes:
-                if (
-                    note.reminder_time
-                    < (datetime.now() + timedelta(minutes=REMIND_WITHIN_MINUTES)).time()
-                ):
-                    try:
-                        user = await self.__user_repository.read(
-                            users_repository.ReadUserQueryById(
-                                id=note.user_id,
-                            ),
-                        )
+            await self.inner_function()
+            await asyncio.sleep(INTERVAL_BETWEEN_JOBS)
+
+    async def inner_function(self) -> List[Message]:  # noqa: C901
+        """Inner function of the worker."""
+
+        result_messages: List[Message] = []
+        try:
+            notes = await self.__note_repository.read_all()
+            notes = [note for note in notes if not note.notified]
+        except EmptyResult:
+            notes = []
+        self.__logger.info(  # pylint: disable=logging-fstring-interpolation
+            f"Unnotified notes: {len(notes)}",
+        )
+        for note in notes:
+            if (
+                note.reminder_time
+                < (datetime.now() + timedelta(minutes=REMIND_WITHIN_MINUTES)).time()
+            ):
+                try:
+                    user = await self.__user_repository.read(
+                        users_repository.ReadUserQueryById(
+                            id=note.user_id,
+                        ),
+                    )
+                    result_messages.append(
                         await self.__telegram_bot_client.send_message(
                             user.telegram_id,
                             text=f"""
@@ -74,26 +83,27 @@ class NotifierWorker(BaseWorker):
 {note.text}
 {note.reminder_time.strftime("%H:%M")}
 """,
-                        )
-                        await self.__note_repository.update(
-                            notes_repository.UpdateNoteNotifiedStateCommand(
-                                id=note.id,
-                                notified=True,
-                            ),
-                        )
-                        self.__logger.info(  # pylint: disable=logging-fstring-interpolation, line-too-long
-                            f"Successfully notified client on note {note.id}.",
-                        )
-                    except EmptyResult:
-                        self.__logger.error(  # pylint: disable=logging-fstring-interpolation, line-too-long
-                            f"Apparantely, user {note.user_id} is no longer existent.",
-                        )
-                    except ChatNotFound:
-                        self.__logger.error(  # pylint: disable=logging-fstring-interpolation, line-too-long
-                            f"Chat for user {user.telegram_id} does not longer exist.",
-                        )
-                    except Exception as ex:  # pylint: disable=broad-exception-caught
-                        self.__logger.error(  # pylint: disable=logging-fstring-interpolation, line-too-long
-                            f"Unexpected error was raised when trying to notify: {ex}.",
-                        )
-            await asyncio.sleep(INTERVAL_BETWEEN_JOBS)
+                        ),
+                    )
+                    await self.__note_repository.update(
+                        notes_repository.UpdateNoteNotifiedStateCommand(
+                            id=note.id,
+                            notified=True,
+                        ),
+                    )
+                    self.__logger.info(  # pylint: disable=logging-fstring-interpolation, line-too-long
+                        f"Successfully notified client on note {note.id}.",
+                    )
+                except EmptyResult:
+                    self.__logger.error(  # pylint: disable=logging-fstring-interpolation, line-too-long
+                        f"Apparantely, user {note.user_id} is no longer existent.",
+                    )
+                except ChatNotFound:
+                    self.__logger.error(  # pylint: disable=logging-fstring-interpolation, line-too-long
+                        f"Chat for user {user.telegram_id} does not longer exist.",
+                    )
+                except Exception as ex:  # pylint: disable=broad-exception-caught
+                    self.__logger.error(  # pylint: disable=logging-fstring-interpolation, line-too-long
+                        f"Unexpected error was raised when trying to notify: {ex}.",
+                    )
+        return result_messages

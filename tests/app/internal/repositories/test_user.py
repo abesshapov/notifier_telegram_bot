@@ -17,13 +17,13 @@ async def test_on_user_creation(
         repository.CreateUserCommand(
             telegram_id=client_id,
             email="some@email",
-            name="Peter",
+            name="Alex",
         ),
     )
 
     assert creation_response.telegram_id == client_id
     assert creation_response.email == "some@email"
-    assert creation_response.name == "Peter"
+    assert creation_response.name == "Alex"
 
 
 async def test_on_multiple_users_creation(
@@ -36,7 +36,7 @@ async def test_on_multiple_users_creation(
         repository.CreateUserCommand(
             telegram_id=client_id,
             email="some@email",
-            name="Peter",
+            name="Alex",
         ),
     )
 
@@ -44,7 +44,7 @@ async def test_on_multiple_users_creation(
         repository.CreateUserCommand(
             telegram_id=client_id,
             email="some@email",
-            name="Peter",
+            name="Alex",
         ),
     )
     assert another_creation_response.to_dict() == creation_response.to_dict() | {
@@ -64,7 +64,7 @@ async def test_on_specific_user_reading(
         repository.CreateUserCommand(
             telegram_id=client_id,
             email="some@email",
-            name="Peter",
+            name="Alex",
         ),
     )
 
@@ -98,7 +98,7 @@ async def test_on_all_users_reading(
         repository.CreateUserCommand(
             telegram_id=client_id,
             email="some@email",
-            name="Peter",
+            name="Alex",
         ),
     )
 
@@ -117,7 +117,7 @@ async def test_on_user_deletion(
         repository.CreateUserCommand(
             telegram_id=client_id,
             email="some@email",
-            name="Peter",
+            name="Alex",
         ),
     )
 

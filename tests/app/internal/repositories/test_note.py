@@ -39,7 +39,7 @@ async def test_note_creation_for_existent_user(
         users_repository.CreateUserCommand(
             telegram_id=client_id,
             email="some@email",
-            name="Peter",
+            name="Alex",
         ),
     )
 
@@ -68,7 +68,7 @@ async def test_multiple_notes_creation_for_user(
         users_repository.CreateUserCommand(
             telegram_id=client_id,
             email="some@email",
-            name="Peter",
+            name="Alex",
         ),
     )
 
@@ -104,7 +104,7 @@ async def test_specific_note_reading(
         users_repository.CreateUserCommand(
             telegram_id=client_id,
             email="some@email",
-            name="Peter",
+            name="Alex",
         ),
     )
 
@@ -135,7 +135,7 @@ async def test_user_notes_reading(
         users_repository.CreateUserCommand(
             telegram_id=client_id,
             email="some@email",
-            name="Peter",
+            name="Alex",
         ),
     )
 
@@ -175,7 +175,7 @@ async def test_on_all_notes_reading(
         users_repository.CreateUserCommand(
             telegram_id=client_id,
             email="some@email",
-            name="Peter",
+            name="Alex",
         ),
     )
 
@@ -203,7 +203,7 @@ async def test_on_note_notified_state_update(
         users_repository.CreateUserCommand(
             telegram_id=client_id,
             email="some@email",
-            name="Peter",
+            name="Alex",
         ),
     )
 
@@ -235,7 +235,7 @@ async def test_on_note_deletion(
         users_repository.CreateUserCommand(
             telegram_id=client_id,
             email="some@email",
-            name="Peter",
+            name="Alex",
         ),
     )
 

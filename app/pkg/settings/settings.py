@@ -7,7 +7,7 @@ import urllib.parse
 from functools import lru_cache
 
 from dotenv import find_dotenv
-from pydantic import PostgresDsn, root_validator
+from pydantic import NonNegativeInt, PostgresDsn, root_validator
 from pydantic.env_settings import BaseSettings
 from pydantic.types import PositiveInt, SecretStr
 
@@ -125,6 +125,8 @@ class Telegram(_Settings):
     WEBHOOK_URL: str
 
     WEBHOOK_PATH: str
+
+    TEST_CLIENT_ID: typing.Optional[NonNegativeInt] = None
 
 
 class Logging(_Settings):

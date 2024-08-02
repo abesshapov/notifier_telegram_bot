@@ -26,7 +26,7 @@ async def test_get_notes_for_client(
         users_repository.CreateUserCommand(
             telegram_id=client_id,
             email="test@mail.ru",
-            name="Peter",
+            name="Alex",
         ),
     )
     notes = None
@@ -58,7 +58,7 @@ async def test_compose_report_on_notes(
         users_repository.CreateUserCommand(
             telegram_id=client_id,
             email="test@mail.ru",
-            name="Peter",
+            name="Alex",
         ),
     )
     reminder_time = datetime.now()
@@ -112,7 +112,7 @@ async def test_on_note_creation(
         users_repository.CreateUserCommand(
             telegram_id=client_id,
             email="test@mail.ru",
-            name="Peter",
+            name="Alex",
         ),
     )
     time = time_valid[1]
